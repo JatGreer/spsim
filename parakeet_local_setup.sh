@@ -11,7 +11,7 @@
 # env variables for compilation
 export CXX=$(which g++)
 export CUDACXX=$(which nvcc)
-export CMAKE_CUDA_ARCHITECTURES=52 # CUDA arch for k80s on SCARF
+export CMAKE_CUDA_ARCHITECTURES=52 # CUDA arch for GTX-970 on PC
 export FFTW_ROOT="/usr/local/lib/"
 
 # install and test...
