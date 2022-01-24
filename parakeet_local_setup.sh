@@ -12,10 +12,11 @@
 export CXX=$(which g++)
 export CUDACXX=$(which nvcc)
 export CMAKE_CUDA_ARCHITECTURES=52 # CUDA arch for GTX-970 on PC
-export FFTW_ROOT="/usr/local/lib/"
+export FFTW_ROOT=$"/usr/local/"
+export FFTW_LIBRARIES=$"/usr/local/lib/"
 
 # install and test...
-git clone https://github.com/rosalindfranklininstitute/amplus-digital-twin.git
+# git clone https://github.com/rosalindfranklininstitute/amplus-digital-twin.git
 pushd amplus-digital-twin
 git submodule update --init --recursive
 pip install -r requirements.txt
