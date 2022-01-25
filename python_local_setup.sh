@@ -14,7 +14,14 @@ pushd "$workdir"
 
 # if you haven't got python 3.9, install python 3.9
 # Setup up a venv you can use to install requirements via pip
-python3.9 -m venv "$pyenv"
+# python3.9 -m venv "$pyenv" python3.9 resulted in error
+"""
+CMake Error in CMakeLists.txt:
+    Imported target pybind11::module includes non-existent path
+  
+      /usr/include/python3.9
+"""
+python3 -m venv "$pyenv"
 source "$pyenv/bin/activate"
 # "deactivate" is used to deactivate your python environment 
 

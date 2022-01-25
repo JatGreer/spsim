@@ -12,14 +12,15 @@
 export CXX=$(which g++)
 export CUDACXX=$(which nvcc)
 export CMAKE_CUDA_ARCHITECTURES=52 # CUDA arch for GTX-970 on PC
-export FFTW_ROOT=$"/usr/local/"
-export FFTW_LIBRARIES=$"/usr/local/lib/"
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/:/usr/local/lib/
+# export FFTW_ROOT=$"/usr/local/" not need in local due to ld lib path update
+# export FFTW_LIBRARIES=$"/usr/lib/" not needed in local due to ld lib path update
 
 # install and test...
-# git clone https://github.com/rosalindfranklininstitute/amplus-digital-twin.git
+git clone https://github.com/rosalindfranklininstitute/amplus-digital-twin.git
 pushd amplus-digital-twin
-git submodule update --init --recursive
-pip install -r requirements.txt
-pip install -e .
-pytest
+git submodule update --init --recursive # installing another git repo as a 'submodule' and recursive submodules
+pip install -r requirements.txt # install from requirements file
+pip install -e . # this is an editable install
+# pytest # run the (unit?) tests
 popd
