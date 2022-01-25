@@ -290,3 +290,22 @@ parakeet_local_setup.sh: line 26: popd: directory stack empty
 }
 
 Now testing if it actually works.
+
+Realised I forgot to run pytest.
+So now running pytest I get:
+{
+  ========================================= ERRORS ==========================================
+________________________ ERROR collecting tests/test_functions.py _________________________
+ImportError while importing test module '/home/jg/parakeet/spsim/tests/test_functions.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/usr/lib/python3.9/importlib/__init__.py:127: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+tests/test_functions.py:1: in <module>
+    from spsim.functions import prepare_simulation
+E   ModuleNotFoundError: No module named 'spsim.functions'
+================================= short test summary info =================================
+ERROR tests/test_functions.py
+!!!!!!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!!!!!!!
+==================================== 1 error in 0.73s =====================================
+}

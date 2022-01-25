@@ -22,5 +22,5 @@ pushd amplus-digital-twin
 git submodule update --init --recursive # installing another git repo as a 'submodule' and recursive submodules
 pip install -r requirements.txt # install from requirements file
 pip install -e . # this is an editable install
-# pytest # run the (unit?) tests
+pytest # run the (unit?) tests
 popd

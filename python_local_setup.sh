@@ -1,16 +1,10 @@
 #!/usr/bin/bash
 # example use:
-# python_local_setup.sh myworkdir pyenvname
-# If you are already in a workdir you have created should just be able to use:
-# python_local_setup.sh . pyenvname
+# python_local_setup.sh pyenvname
 
-workdir="$1"
-pyenv="$2"
+pyenv="$1"
 
 popd
-
-mkdir "$workdir"
-pushd "$workdir"
 
 # if you haven't got python 3.9, install python 3.9
 # Setup up a venv you can use to install requirements via pip
