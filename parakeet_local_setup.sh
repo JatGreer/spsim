@@ -10,7 +10,8 @@
 
 # env variables for compilation
 export CXX=$(which g++)
-export CUDACXX=$(which nvcc)
+# export CUDACXX=$(which nvcc)
+export CUDACXX=/usr/local/cuda-11.6/bin/nvcc
 export CMAKE_CUDA_ARCHITECTURES=52 # CUDA arch for GTX-970 on PC
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/:/usr/local/lib/
 # export FFTW_ROOT=$"/usr/local/" not need in local due to ld lib path update
