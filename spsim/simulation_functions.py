@@ -12,9 +12,9 @@ import zarr
 from dask import delayed, array as da
 from dask.distributed import fire_and_forget, Client
 
-from .data_model import Simulation, SimulationConfig
-from .gemmi import rotate_structure, structure_to_cif
-from .parakeet_interface.config import write as write_config
+from data_model import Simulation, SimulationConfig
+from gemmi_utils import rotate_structure, structure_to_cif
+from parakeet_interface.config import write as write_config
 
 
 def prepare_simulation(
@@ -22,7 +22,7 @@ def prepare_simulation(
         output_basename: str,
         n_images: int,
         image_sidelength: int,
-        defocus_range: tuple[float],
+        defocus_range: tuple, # tuple[float],
         random_seed: int = None,
 ) -> Simulation:
     input_parameters = SimulationConfig(

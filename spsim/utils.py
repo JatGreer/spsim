@@ -9,7 +9,7 @@ import pandas as pd
 import yaml
 import zarr
 
-from .parakeet_interface import CONFIG_TEMPLATE
+from parakeet_interface import CONFIG_TEMPLATE
 
 
 def files_in_directory(directory):

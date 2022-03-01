@@ -7,8 +7,8 @@ from dask.distributed import Client
 from dask_jobqueue import SLURMCluster
 from humanize import naturaldelta
 
-from .simulation_functions import prepare_simulation
-from .utils import zarr2mrcs, json2star
+from simulation_functions import prepare_simulation
+from utils import zarr2mrcs, json2star
 
 @click.command()
 @click.option(
@@ -149,7 +149,58 @@ def spsim_scarf(
         sleep(0.1)
     click.echo(f'done!')
 
+@click.command()
+@click.option(
+    '--input-directory',
+    type=click.Path(exists=True),
+    prompt=True,
+    help='input directory containing structure files'
+)
+@click.option(
+    '--output-basename',
+    type=str,
+    prompt=True,
+    help='basename for output files from simulation'
+)
+@click.option(
+    '--n-images',
+    type=int,
+    prompt=True,
+    help='number of images to simulate'
+)
+@click.option(
+    '--image-sidelength',
+    type=int,
+    prompt=True,
+    help='sidelength of simulated images, must be divisible by two'
+)
+@click.option(
+    '--min-defocus',
+    type=float,
+    prompt=True,
+    help='minimum defocus value in microns, positive is underfocus'
 
+)
+@click.option(
+    '--max-defocus',
+    type=float,
+    prompt=True,
+    help='maximum defocus value in microns, positive is underfocus'
+)
+@click.option(
+    '--random-seed',
+    default=None,
+    type=int,
+    prompt=True,
+    help='random seed for reproducing identical simulations'
+)
+@click.option(
+    '--n-gpus',
+    default=1,
+    type=int,
+    prompt=True,
+    help='number of gpus to request for this simulation'
+)
 def spsim_local(
         input_directory,
         output_basename,

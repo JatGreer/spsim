@@ -14,10 +14,10 @@ from pydantic import BaseModel, confloat, conint, FilePath, DirectoryPath, valid
 from scipy.spatial.transform import Rotation
 from dask.distributed import Client
 
-from .rotation import generate_uniform_rotations, rotation_to_relion_eulers
-from .typing import DefocusRange
-from .parakeet_interface import CONFIG_TEMPLATE
-from .utils import generate_parakeet_config
+from rotation import generate_uniform_rotations, rotation_to_relion_eulers
+from defocus import DefocusRange
+from parakeet_interface import CONFIG_TEMPLATE
+from utils import generate_parakeet_config
 
 
 class SingleImageParameters(BaseModel):
