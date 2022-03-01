@@ -150,6 +150,73 @@ def spsim_scarf(
     click.echo(f'done!')
 
 
+def spsim_local(
+        input_directory,
+        output_basename,
+        n_images,
+        image_sidelength,
+        min_defocus,
+        max_defocus,
+        random_seed,
+        n_gpus,
+):
+
+    # create simulation
+    simulation = prepare_simulation(
+        input_directory=input_directory,
+        output_basename=output_basename,
+        n_images=n_images,
+        image_sidelength=image_sidelength,
+        defocus_range=(min_defocus, max_defocus),
+        random_seed=random_seed
+    )
+
+    click.echo('\n')
+    click.echo('### SPSIM 0.0.1 ###')
+    click.echo('killing this process will terminate your simulation')
+
+    n_structure_files = len(simulation.config.structure_files)
+    click.echo(f'simulating {n_images} images from {n_structure_files} structure files')
+    click.echo(f'job walltimes are short, your jobs will not block others for long!')
+    start_time = datetime.now()
+    click.echo(f'started computations at {start_time.strftime("%m/%d/%Y, %H:%M:%S")}')
+
+    jf = f'{simulation.config.output_basename}.json'
+    with open(jf, 'w') as f:
+        f.write(simulation.json())
+    click.echo(f"simulation params stored in '{jf}'")
+
+    zf = simulation.zarr_filename
+    click.echo(f"results stored in '{zf}'\n")
+
+    click.echo(f'submitting computations to the cluster takes time')
+    click.echo(f'once all jobs are submitted, status of simulation will be printed to the console')
+    click.echo(f'\n')
+
+    simulation.create_zarr_store()
+    for i in n_images:
+        simulation.simulate_image(idx)
+
+    za = zarr.convenience.open(zf)
+
+    while za.nchunks_initialized < za.nchunks:
+        now = datetime.now()
+        particles_simulated = za.nchunks_initialized
+        particles_simulated_str = f'{particles_simulated} / {n_images} particles simulated'
+        elapsed_time = naturaldelta(now - start_time, minimum_unit='seconds')
+
+        if particles_simulated > 0:
+            time_per_particle = (now - start_time).total_seconds() / particles_simulated
+        else:
+            time_per_particle = 9999.99
+        click.echo(
+            f'{particles_simulated_str} in {elapsed_time} (avg. {time_per_particle:.2f}s per particle)        \r',
+            nl=False
+        )
+        sleep(0.1)
+    click.echo(f'done!')
+
+
 @click.command()
 @click.option(
     '--input-zarr-file',
