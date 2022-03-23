@@ -151,20 +151,20 @@ class Simulation(BaseModel):
     def simulate_image(self, idx: int):
         if 0 > idx > len(self):
             raise IndexError
-        from .simulation_functions import simulate_single_image
+        from simulation_functions import simulate_single_image
         return simulate_single_image(simulation=self, idx=idx, zarr_filename=self.zarr_filename)
 
     def as_dask_array(self):
-        from .simulation_functions import simulation_as_dask_array
+        from simulation_functions import simulation_as_dask_array
         return simulation_as_dask_array(self, self.zarr_filename)
 
     def create_zarr_store(self):
         """"creates a zarr store for the results of the simulation"""
-        from .simulation_functions import create_zarr_store
+        from simulation_functions import create_zarr_store
         return create_zarr_store(simulation=self)
 
     def execute(self, client: Client):
-        from .simulation_functions import execute
+        from simulation_functions import execute
         return execute(simulation=self, client=client)
 
 
