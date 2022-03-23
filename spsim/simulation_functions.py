@@ -118,7 +118,18 @@ def simulate_single_image(
         # load image file and invert
         with mrcfile.open('image.mrc') as mrc:
             image = np.squeeze(mrc.data) * -1
-
+            """
+            zarr_filenamebase = os.path.dirname(zarr_filename)
+            mrcfilename = os.path.join(zarr_filenamebase, 'mrcfile{}.mrc'.format(idx))
+            if os.path.exists(mrcfilename):
+                os.remove(mrcfilename)
+            with mrcfile.new(mrcfilename, overwrite=True) as mrc:
+                mrc.set_data(image.reshape(800,800))
+                print(mrc.data)
+                mrc.close()
+            print('mrcfile{}.mrc gives {} entries'.format(idx, image.shape))
+            print('Saved to: {}'.format(os.path.join(zarr_filenamebase, 'mrcfile{}.mrc'.format(idx))))
+            """
     # change back to base directory
     os.chdir(base_directory)
 

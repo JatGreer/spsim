@@ -59,4 +59,7 @@ while za.nchunks_initialized < za.nchunks:
         nl=False
     )
     sleep(0.1)
+
+zarr2mrcs(output_basename+'.zarr', output_basename+'.mrc')
+json2star(output_basename+'.json', output_basename+'.star')
 print(f'done!')
