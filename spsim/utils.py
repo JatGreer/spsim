@@ -9,7 +9,7 @@ import pandas as pd
 import yaml
 import zarr
 
-from .parakeet_interface import CONFIG_TEMPLATE
+from parakeet_interface import CONFIG_TEMPLATE
 
 
 def files_in_directory(directory):
@@ -51,7 +51,7 @@ def generate_parakeet_config(
 
 def zarr2mrcs(zarr_file, mrcs_file):
     za = zarr.convenience.open(zarr_file)
-    mrc = mrcfile.new_mmap(mrcs_file, shape=za.shape, mrc_mode=2)
+    mrc = mrcfile.new_mmap(mrcs_file, shape=za.shape, mrc_mode=2, overwrite=True)
     for idx in range(za.shape[0]):
         mrc.data[idx] = za[idx]
     mrc.close()
@@ -106,7 +106,7 @@ def json2star(json_file, star_file):
     particle_df = pd.DataFrame.from_dict(particle_df_dict)
     starfile.write(
         data={'optics': optics_df, 'particles': particle_df},
-        filename=star_file
+        filename=star_file, overwrite=True
     )
     return
 

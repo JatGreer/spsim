@@ -7,56 +7,68 @@ from dask.distributed import Client
 from dask_jobqueue import SLURMCluster
 from humanize import naturaldelta
 
-from .simulation_functions import prepare_simulation
-from .utils import zarr2mrcs, json2star
+from simulation_functions import prepare_simulation
+from utils import zarr2mrcs, json2star
+from localtesting import spsim_local_call
 
-@click.command()
+"""
+Example use of spsim_local via cmd line:
+python cli.py   spsim_local --input_directory=/home/jg/parakeet/testing/ --output_basename=/home/jg/parakeet/output_testing/test --n_images=20 --image_sidelength=800 --min_defocus=1 --max_defocus=10 --random_seed=6784 --n_gpus=1
+"""
+
+
+@click.group('cli')
+@click.pass_context
+def cli(command):
+    pass
+
+@cli.command('spsim_scarf')
 @click.option(
-    '--input-directory',
+    '--input_directory',
     type=click.Path(exists=True),
     prompt=True,
     help='input directory containing structure files'
 )
 @click.option(
-    '--output-basename',
+    '--output_basename',
     type=str,
     prompt=True,
     help='basename for output files from simulation'
 )
 @click.option(
-    '--n-images',
+    '--n_images',
     type=int,
     prompt=True,
     help='number of images to simulate'
 )
 @click.option(
-    '--image-sidelength',
+    '--image_sidelength',
     type=int,
     prompt=True,
     help='sidelength of simulated images, must be divisible by two'
 )
 @click.option(
-    '--min-defocus',
+    '--min_defocus',
     type=float,
     prompt=True,
     help='minimum defocus value in microns, positive is underfocus'
 
 )
 @click.option(
-    '--max-defocus',
+    '--max_defocus',
     type=float,
     prompt=True,
     help='maximum defocus value in microns, positive is underfocus'
 )
 @click.option(
-    '--random-seed',
+    '--random_seed',
     default=None,
     type=int,
     prompt=True,
     help='random seed for reproducing identical simulations'
 )
 @click.option(
-    '--n-gpus',
+    '--n_gpus',
     default=1,
     type=int,
     prompt=True,
@@ -149,68 +161,60 @@ def spsim_scarf(
         sleep(0.1)
     click.echo(f'done!')
 
-@click.command()
+
+@cli.command('spsim_bask')
 @click.option(
-    '--input-directory',
+    '--input_directory',
     type=click.Path(exists=True),
     prompt=True,
     help='input directory containing structure files'
 )
 @click.option(
-    '--output-basename',
+    '--output_basename',
     type=str,
     prompt=True,
     help='basename for output files from simulation'
 )
 @click.option(
-    '--n-images',
+    '--n_images',
     type=int,
     prompt=True,
     help='number of images to simulate'
 )
 @click.option(
-    '--image-sidelength',
+    '--image_sidelength',
     type=int,
     prompt=True,
     help='sidelength of simulated images, must be divisible by two'
 )
 @click.option(
-    '--min-defocus',
+    '--min_defocus',
     type=float,
     prompt=True,
     help='minimum defocus value in microns, positive is underfocus'
 
 )
 @click.option(
-    '--max-defocus',
+    '--max_defocus',
     type=float,
     prompt=True,
     help='maximum defocus value in microns, positive is underfocus'
 )
 @click.option(
-    '--random-seed',
+    '--random_seed',
     default=None,
     type=int,
     prompt=True,
     help='random seed for reproducing identical simulations'
 )
 @click.option(
-    '--n-gpus',
+    '--n_gpus',
     default=1,
     type=int,
     prompt=True,
     help='number of gpus to request for this simulation'
-)
+)   
 def spsim_bask(
-        input_directory,
-        output_basename,
-        n_images,
-        image_sidelength,
-        min_defocus,
-        max_defocus,
-        random_seed,
-        n_gpus,
-):
     # prepare computational resources
     BASK_GPU_CONFIG = {
         'queue': 'gpu',
@@ -288,7 +292,78 @@ def spsim_bask(
         sleep(0.1)
     click.echo(f'done!')
 
-@click.command()
+
+
+@cli.command('spsim_local')
+@click.option(
+    '--input_directory',
+    type=click.Path(exists=True),
+    prompt=True,
+    help='input directory containing structure files'
+)
+@click.option(
+    '--output_basename',
+    type=str,
+    prompt=True,
+    help='basename for output files from simulation'
+)
+@click.option(
+    '--n_images',
+    type=int,
+    prompt=True,
+    help='number of images to simulate'
+)
+@click.option(
+    '--image_sidelength',
+    type=int,
+    prompt=True,
+    help='sidelength of simulated images, must be divisible by two'
+)
+@click.option(
+    '--min_defocus',
+    type=float,
+    prompt=True,
+    help='minimum defocus value in microns, positive is underfocus'
+
+)
+@click.option(
+    '--max_defocus',
+    type=float,
+    prompt=True,
+    help='maximum defocus value in microns, positive is underfocus'
+)
+@click.option(
+    '--random_seed',
+    default=None,
+    type=int,
+    prompt=True,
+    help='random seed for reproducing identical simulations'
+)
+@click.option(
+    '--n_gpus',
+    default=1,
+    type=int,
+    prompt=True,
+    help='number of gpus to request for this simulation'
+)
+def spsim_local(
+        input_directory,
+        output_basename,
+        n_images,
+        image_sidelength,
+        min_defocus,
+        max_defocus,
+        random_seed,
+        n_gpus,
+):
+
+
+    spsim_local_call(input_directory=input_directory, output_basename=output_basename, \
+        n_images=n_images, image_sidelength=image_sidelength, min_defocus=min_defocus, \
+            max_defocus=max_defocus, random_seed=random_seed, n_gpus=n_gpus)
+
+
+@cli.command('zarr2mrcs_cli')
 @click.option(
     '--input-zarr-file',
     type=click.Path(exists=True),
@@ -306,7 +381,8 @@ def zarr2mrcs_cli(input_zarr_file, mrcs_file):
     return
 
 
-@click.command()
+@cli.command('json2star_cli')
+@click.pass_context
 @click.option(
     '--input-json-file',
     type=click.Path(exists=True),
@@ -322,3 +398,10 @@ def zarr2mrcs_cli(input_zarr_file, mrcs_file):
 def json2star_cli(input_json_file, output_star_file):
     json2star(input_json_file, output_star_file)
     return
+
+
+def main():
+   cli(prog_name="cli")
+
+if __name__ == "__main__":
+    main()

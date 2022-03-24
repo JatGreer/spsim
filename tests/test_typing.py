@@ -1,6 +1,6 @@
 import pytest
 
-from spsim.typing import DefocusRange
+from spsim.defocus import DefocusRange
 
 
 def test_defocus_range_instantiation_valid():

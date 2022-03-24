@@ -12,9 +12,9 @@ import zarr
 from dask import delayed, array as da
 from dask.distributed import fire_and_forget, Client
 
-from .data_model import Simulation, SimulationConfig
-from .gemmi import rotate_structure, structure_to_cif
-from .parakeet_interface.config import write as write_config
+from data_model import Simulation, SimulationConfig
+from gemmi_utils import rotate_structure, structure_to_cif
+from parakeet_interface.config import write as write_config
 
 
 def prepare_simulation(
@@ -22,7 +22,7 @@ def prepare_simulation(
         output_basename: str,
         n_images: int,
         image_sidelength: int,
-        defocus_range: tuple[float],
+        defocus_range: tuple, # tuple[float],
         random_seed: int = None,
 ) -> Simulation:
     input_parameters = SimulationConfig(
@@ -118,7 +118,18 @@ def simulate_single_image(
         # load image file and invert
         with mrcfile.open('image.mrc') as mrc:
             image = np.squeeze(mrc.data) * -1
-
+            """
+            zarr_filenamebase = os.path.dirname(zarr_filename)
+            mrcfilename = os.path.join(zarr_filenamebase, 'mrcfile{}.mrc'.format(idx))
+            if os.path.exists(mrcfilename):
+                os.remove(mrcfilename)
+            with mrcfile.new(mrcfilename, overwrite=True) as mrc:
+                mrc.set_data(image.reshape(800,800))
+                print(mrc.data)
+                mrc.close()
+            print('mrcfile{}.mrc gives {} entries'.format(idx, image.shape))
+            print('Saved to: {}'.format(os.path.join(zarr_filenamebase, 'mrcfile{}.mrc'.format(idx))))
+            """
     # change back to base directory
     os.chdir(base_directory)
 
