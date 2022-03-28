@@ -1,4 +1,4 @@
-from spsim.gemmi import rotate_structure, structure_to_cif
+from spsim.gemmi_utils import rotate_structure, structure_to_cif
 from scipy.spatial.transform import Rotation as R
 import gemmi
 

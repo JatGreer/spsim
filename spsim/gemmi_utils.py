@@ -5,7 +5,7 @@ import numpy as np
 from gemmi import Model, Structure, CRA
 from scipy.spatial.transform import Rotation as R
 
-from .rotation import rotate_coordinates
+from rotation import rotate_coordinates
 
 
 def xyz_from_model(model: Model):
