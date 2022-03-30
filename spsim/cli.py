@@ -161,7 +161,7 @@ def spsim_scarf(
         sleep(0.1)
     click.echo(f'done!')
 
-
+"""
 @cli.command('spsim_bask')
 @click.option(
     '--input_directory',
@@ -213,7 +213,7 @@ def spsim_scarf(
     type=int,
     prompt=True,
     help='number of gpus to request for this simulation'
-)   
+)
 def spsim_bask(
     # prepare computational resources
     BASK_GPU_CONFIG = {
@@ -224,7 +224,6 @@ def spsim_bask(
         'walltime': '00:30:00',
         'extra': ["--lifetime", "15m", "--lifetime-stagger", "1m"],
     }
-
     # create a cluster, connect to it and scale
     cluster = SLURMCluster(**BASK_GPU_CONFIG)
     client = Client(cluster)
@@ -291,7 +290,7 @@ def spsim_bask(
         )
         sleep(0.1)
     click.echo(f'done!')
-
+"""
 
 
 @cli.command('spsim_local')
