@@ -22,7 +22,8 @@ n_gpus = 1
 """
 
 def spsim_local_call(input_directory, output_basename, n_images,\
-    image_sidelength, min_defocus, max_defocus, random_seed, n_gpus):
+    image_sidelength, min_defocus, max_defocus, random_seed, n_gpus,\
+    singularity, image):
 
     # create simulation
     simulation = prepare_simulation(
@@ -46,7 +47,7 @@ def spsim_local_call(input_directory, output_basename, n_images,\
 
     simulation.create_zarr_store()
     for idx in range (n_images):
-        simulation.simulate_image(idx)
+        simulation.simulate_image(idx, singularity, image)
 
     za = zarr.convenience.open(zf)
     while za.nchunks_initialized < za.nchunks:

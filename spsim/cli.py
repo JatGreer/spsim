@@ -13,7 +13,7 @@ from localtesting import spsim_local_call
 
 """
 Example use of spsim_local via cmd line:
-python cli.py   spsim_local --input_directory=/home/jg/parakeet/testing/ --output_basename=/home/jg/parakeet/output_testing/test --n_images=20 --image_sidelength=800 --min_defocus=1 --max_defocus=10 --random_seed=6784 --n_gpus=1
+python cli.py   spsim_local --input_directory=/home/jg/parakeet/testing/ --output_basename=/home/jg/parakeet/output_testing/test --n_images=5 --image_sidelength=800 --min_defocus=1 --max_defocus=10 --random_seed=6784 --n_gpus=1
 """
 
 
@@ -161,7 +161,6 @@ def spsim_scarf(
         sleep(0.1)
     click.echo(f'done!')
 
-"""
 @cli.command('spsim_bask')
 @click.option(
     '--input_directory',
@@ -224,6 +223,7 @@ def spsim_bask(
         'walltime': '00:30:00',
         'extra': ["--lifetime", "15m", "--lifetime-stagger", "1m"],
     }
+):
     # create a cluster, connect to it and scale
     cluster = SLURMCluster(**BASK_GPU_CONFIG)
     client = Client(cluster)
@@ -290,8 +290,6 @@ def spsim_bask(
         )
         sleep(0.1)
     click.echo(f'done!')
-"""
-
 
 @cli.command('spsim_local')
 @click.option(
@@ -345,6 +343,20 @@ def spsim_bask(
     prompt=True,
     help='number of gpus to request for this simulation'
 )
+@click.option(
+    '--singularity',
+    default=False,
+    type=bool,
+    prompt=False,
+    help='whether to use singularity image (if so also give --image for .sif to use'
+)
+@click.option(
+    '--image',
+    default=None,
+    type=str,
+    prompt=False,
+    help='Filepath for .sif to use with singularity cmd'
+)
 def spsim_local(
         input_directory,
         output_basename,
@@ -354,12 +366,14 @@ def spsim_local(
         max_defocus,
         random_seed,
         n_gpus,
+        singularity,
+        image,
 ):
 
 
     spsim_local_call(input_directory=input_directory, output_basename=output_basename, \
         n_images=n_images, image_sidelength=image_sidelength, min_defocus=min_defocus, \
-            max_defocus=max_defocus, random_seed=random_seed, n_gpus=n_gpus)
+            max_defocus=max_defocus, random_seed=random_seed, n_gpus=n_gpus, singularity=singularity, image=image)
 
 
 @cli.command('zarr2mrcs_cli')
