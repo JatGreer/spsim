@@ -163,9 +163,9 @@ class Simulation(BaseModel):
         from simulation_functions import create_zarr_store
         return create_zarr_store(simulation=self)
 
-    def execute(self, client: Client):
+    def execute(self, client: Client, singularity:Optional[bool]=False, image:Optional[str]=None):
         from simulation_functions import execute
-        return execute(simulation=self, client=client)
+        return execute(simulation=self, client=client, singularity=singularity, image=image)
 
 
 
