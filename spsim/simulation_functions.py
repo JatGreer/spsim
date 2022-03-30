@@ -206,11 +206,13 @@ def simulation_as_dask_array(
 
 def execute(
         simulation: Simulation,
-        client: Client
+        client: Client,
+        singularity: Optional[bool]=False,
+        image: Optional[str]=None
 ):
     n_images = len(simulation)
     simulation.create_zarr_store()
     for idx in range(n_images):
-        future = client.submit(simulation.simulate_image, idx)
+        future = client.submit(simulation.simulate_image, idx, singularity, image)
         fire_and_forget(future)
     return

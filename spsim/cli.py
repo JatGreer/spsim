@@ -74,6 +74,20 @@ def cli(command):
     prompt=True,
     help='number of gpus to request for this simulation'
 )
+@click.option(
+    '--singularity',
+    default=False,
+    type=bool,
+    prompt=False,
+    help='whether to use singularity image (if so also give --image for .sif to use'
+)
+@click.option(
+    '--image',
+    default=None,
+    type=str,
+    prompt=False,
+    help='Filepath for .sif to use with singularity cmd'
+)
 def spsim_scarf(
         input_directory,
         output_basename,
@@ -83,6 +97,8 @@ def spsim_scarf(
         max_defocus,
         random_seed,
         n_gpus,
+        singularity,
+        image,
 ):
     # prepare computational resources
     SCARF_GPU_CONFIG = {
@@ -140,7 +156,7 @@ def spsim_scarf(
     click.echo(f'once all jobs are submitted, status of simulation will be printed to the console')
     click.echo(f'\n')
 
-    simulation.execute(client)
+    simulation.execute(client, singularity, image)
 
     za = zarr.convenience.open(zf)
 
@@ -212,8 +228,33 @@ def spsim_scarf(
     type=int,
     prompt=True,
     help='number of gpus to request for this simulation'
+)   
+@click.option(
+    '--singularity',
+    default=False,
+    type=bool,
+    prompt=False,
+    help='whether to use singularity image (if so also give --image for .sif to use'
+)
+@click.option(
+    '--image',
+    default=None,
+    type=str,
+    prompt=False,
+    help='Filepath for .sif to use with singularity cmd'
 )
 def spsim_bask(
+    input_directory,
+        output_basename,
+        n_images,
+        image_sidelength,
+        min_defocus,
+        max_defocus,
+        random_seed,
+        n_gpus,
+        singularity,
+        image,
+):
     # prepare computational resources
     BASK_GPU_CONFIG = {
         'queue': 'gpu',
@@ -223,7 +264,7 @@ def spsim_bask(
         'walltime': '00:30:00',
         'extra': ["--lifetime", "15m", "--lifetime-stagger", "1m"],
     }
-):
+
     # create a cluster, connect to it and scale
     cluster = SLURMCluster(**BASK_GPU_CONFIG)
     client = Client(cluster)
@@ -270,7 +311,7 @@ def spsim_bask(
     click.echo(f'once all jobs are submitted, status of simulation will be printed to the console')
     click.echo(f'\n')
 
-    simulation.execute(client)
+    simulation.execute(client, singularity, image)
 
     za = zarr.convenience.open(zf)
 
