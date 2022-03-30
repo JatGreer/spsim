@@ -4,6 +4,7 @@ module load baskerville
 module load CUDA
 module load HDF5
 module load FFTW
+module load bask-singularity-conf/live
 # conda create --name parakeet python=3.9
 # conda activate parakeet
 
