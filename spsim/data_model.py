@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import Optional, Sequence
 from pydantic import BaseModel, confloat, conint, FilePath, DirectoryPath, validator, \
     ValidationError
 from scipy.spatial.transform import Rotation
@@ -148,11 +148,11 @@ class Simulation(BaseModel):
     def zarr_filename(self):
         return f'{self.config.output_basename}.zarr'
 
-    def simulate_image(self, idx: int):
+    def simulate_image(self, idx: int, singularity: Optional[bool]=False, image: Optional[str]=None):
         if 0 > idx > len(self):
             raise IndexError
         from simulation_functions import simulate_single_image
-        return simulate_single_image(simulation=self, idx=idx, zarr_filename=self.zarr_filename)
+        return simulate_single_image(simulation=self, idx=idx, zarr_filename=self.zarr_filename, singularity=singularity, image=image)
 
     def as_dask_array(self):
         from simulation_functions import simulation_as_dask_array

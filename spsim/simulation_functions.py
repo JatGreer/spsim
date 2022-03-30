@@ -1,3 +1,5 @@
+from fileinput import filename
+from msilib.schema import File
 import os
 import subprocess
 from functools import partial
@@ -11,6 +13,8 @@ import numpy as np
 import zarr
 from dask import delayed, array as da
 from dask.distributed import fire_and_forget, Client
+import errno
+import os
 
 from data_model import Simulation, SimulationConfig
 from gemmi_utils import rotate_structure, structure_to_cif
@@ -71,7 +75,7 @@ def load_rotate_save(
 
 
 def simulate_single_image(
-        simulation: Simulation, idx: int, zarr_filename: Optional[str] = None
+        simulation: Simulation, idx: int, zarr_filename: Optional[str] = None, singularity: Optional[bool]=False, image: Optional[str]=None
 ) -> np.ndarray:
     """Generate a single image from a single-particle simulation.
 
@@ -97,23 +101,48 @@ def simulate_single_image(
 
         # write parakeet config file
         write_config(parakeet_config, 'parakeet_config.yaml')
+        if singularity:
+            if os.path.exists(image):
+                # activate the singularity
+                subprocess.run(
+                    ['function', 'run', '{singularity', 'run', '--nv', image, '$@}']
+                )
+                # run parakeet
+                subprocess.run(
+                    ['run', 'parakeet.sample.new', '-c', 'parakeet_config.yaml']
+                )
+                subprocess.run(
+                    ['run', 'parakeet.simulate.exit_wave', '-c', 'parakeet_config.yaml']
+                )
+                subprocess.run(
+                    ['run', 'parakeet.simulate.optics', '-c', 'parakeet_config.yaml']
+                )
+                subprocess.run(
+                    ['run', 'parakeet.simulate.image', '-c', 'parakeet_config.yaml']
+                )
+                subprocess.run(
+                    ['run', 'parakeet.export', 'image.h5', '-o', 'image.mrc']
+                )
+            else:
+                raise FileNotFoundError(errno.ENOENT, os.strerror(errno.ENOENT), filename)
 
-        # run parakeet
-        subprocess.run(
-            ['parakeet.sample.new', '-c', 'parakeet_config.yaml']
-        )
-        subprocess.run(
-            ['parakeet.simulate.exit_wave', '-c', 'parakeet_config.yaml']
-        )
-        subprocess.run(
-            ['parakeet.simulate.optics', '-c', 'parakeet_config.yaml']
-        )
-        subprocess.run(
-            ['parakeet.simulate.image', '-c', 'parakeet_config.yaml']
-        )
-        subprocess.run(
-            ['parakeet.export', 'image.h5', '-o', 'image.mrc']
-        )
+        else:
+            # run parakeet
+            subprocess.run(
+                ['parakeet.sample.new', '-c', 'parakeet_config.yaml']
+            )
+            subprocess.run(
+                ['parakeet.simulate.exit_wave', '-c', 'parakeet_config.yaml']
+            )
+            subprocess.run(
+                ['parakeet.simulate.optics', '-c', 'parakeet_config.yaml']
+            )
+            subprocess.run(
+                ['parakeet.simulate.image', '-c', 'parakeet_config.yaml']
+            )
+            subprocess.run(
+                ['parakeet.export', 'image.h5', '-o', 'image.mrc']
+            )
 
         # load image file and invert
         with mrcfile.open('image.mrc') as mrc:
